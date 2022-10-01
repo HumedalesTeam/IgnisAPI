@@ -3,7 +3,9 @@ dotenv.config()
 import express from "express";
 import mysql from "mysql";
 
+
 const app = express()
+app.use(express.json());
 const port = 3000
 const connection = mysql.createConnection({
   host: process.env.MYSQL_HOST,
@@ -15,24 +17,40 @@ const connection = mysql.createConnection({
 connection.connect()
 
 connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
-  if (err) throw err
+  	if (err) throw err;
 
-  console.log('The solution is: ', rows[0].solution)
-})
-
-connection.end()
-
-
+  	console.log('The solution is: ', rows[0].solution)
+});
 
 app.get('/', (req, res) => {
-	res.send(`${process.env.AAA}`)
-})
+	res.send(`${process.env.AAA}`);
+});
+
+app.put('/wa/subscriber', (req, res)=>{
+	console.log(req.body)
+	var parsed = req.body;
+	connection.query("INSERT INTO ignis.WA_SUBSCRIBERS (whatsapp_id, area) VALUES (?,?)", [parsed.whatsapp_id, parsed.area]);
+	res.send("Adding...")
+});
+
+app.delete('/wa/subscriber', (req, res)=>{
+	console.log(req.body)
+	var parsed = req.body;
+	connection.query("DELETE FROM ignis.WA_SUBSCRIBERS WHERE whatsapp_id=?", [parsed.whatsapp_id]);
+	res.send("Adding...")
+});
+
 
 app.listen(port, () => {
- 	console.log(`Example app listening on port ${port}`)
-})
+ 	console.log(`Example app listening on port ${port}`);
+});
 
 
 setInterval(()=>{
 	// TODO FIRMS request goes here
-})
+}, 10*60*1000)
+
+process.on('SIGTERM', () => {
+	console.info('SIGTERM signal received.');
+	connection.end();
+});
