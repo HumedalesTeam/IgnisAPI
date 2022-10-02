@@ -19,7 +19,7 @@ connection.connect()
 app.use(function (req, res, next) {
 
 	console.log('Time:', Date.now());
-	if(req.body.token!==process.env.X_API_TOKEN) {
+	if(req.headers['x-api-key']!==process.env.X_API_KEY) {
 		res.status(401).send("Unauthorized");
 		return;
 	}
@@ -36,6 +36,7 @@ app.put('/wa/subscriber', (req, res)=>{
 	var parsed = req.body;
 	connection.query("INSERT INTO ignis.WA_SUBSCRIBERS (whatsapp_id, area) VALUES (?,?)", [parsed.whatsapp_id, parsed.area]);
 	res.status(200).send("Added!");
+	console.log(req.body);
 });
 
 app.delete('/wa/subscriber', (req, res)=>{
@@ -45,9 +46,9 @@ app.delete('/wa/subscriber', (req, res)=>{
 	res.status(200).send("Deleted!");
 });
 
-app.get('/wa/subscriber', async (req, res)=>{
+app.get('/wa/subscriber/:id', async (req, res)=>{
 	console.log(req.body);
-	const [rows, fields] = await connection.promise().query("SELECT * FROM ignis.WA_SUBSCRIBERS WHERE whatsapp_id=?", [req.body.whatsapp_id]);
+	const [rows, fields] = await connection.promise().query("SELECT * FROM ignis.WA_SUBSCRIBERS WHERE whatsapp_id=?", [req.params.id]);
 	res.send(rows);
 });
 
