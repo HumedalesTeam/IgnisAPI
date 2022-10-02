@@ -16,11 +16,6 @@ const connection = mysql.createConnection({
 
 connection.connect()
 
-connection.query('SELECT 1 + 1 AS solution', (err, rows, fields) => {
-  	if (err) throw err;
-
-  	console.log('The solution is: ', rows[0].solution)
-});
 
 app.get('/', (req, res) => {
 	res.send(`${process.env.AAA}`);
@@ -47,7 +42,6 @@ app.listen(port, () => {
 
 
 setInterval(()=>{
-	// TODO FIRMS request goes here
 }, 10*60*1000)
 
 process.on('SIGTERM', () => {
