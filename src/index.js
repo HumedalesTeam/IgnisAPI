@@ -52,6 +52,12 @@ app.get('/wa/subscriber/:id', async (req, res)=>{
 	res.send(rows);
 });
 
+app.get('/wa/subscriberlist', async (req, res)=>{
+	console.log(req.body);
+	const [rows, fields] = await connection.promise().query("SELECT * FROM ignis.WA_SUBSCRIBERS");
+	res.send(rows);
+});
+
 
 app.listen(port, () => {
  	console.log(`Example app listening on port ${port}`);
